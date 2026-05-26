@@ -64,6 +64,18 @@ Right-click the hyperbox to travel inside it; right-click an inner aperture to e
     versionRange="[2.0.0.0,2.1.0.0)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.hyperbox]]
+    modId="ae2"
+    type="optional"
+    versionRange="[17,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.hyperbox]]
+    modId="modern_industrialization"
+    type="optional"
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
 [[mixins]]
 	config="hyperbox.mixins.json"
 [[accessTransformers]]

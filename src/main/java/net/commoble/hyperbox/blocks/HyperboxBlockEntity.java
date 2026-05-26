@@ -1,6 +1,7 @@
 package net.commoble.hyperbox.blocks;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -43,6 +44,12 @@ public class HyperboxBlockEntity extends BlockEntity implements Nameable
 	public static final String WEAK_POWER = "weak_power";
 	public static final String STRONG_POWER = "strong_power";
 	public static final String COLOR = "color";
+
+	// Set by AE2Compat when AE2 is loaded
+	@Nullable public static Consumer<HyperboxBlockEntity> ae2OnLoad = null;
+	@Nullable public static Consumer<HyperboxBlockEntity> ae2OnUnload = null;
+	@Nullable public static Consumer<HyperboxBlockEntity> ae2OnLevelKeySet = null;
+
 	// key to the hyperbox world stored in this te
 	private Optional<ResourceKey<Level>> levelKey = Optional.empty();
 	private Optional<Component> name = Optional.empty();
@@ -61,6 +68,20 @@ public class HyperboxBlockEntity extends BlockEntity implements Nameable
 		super(type, pos, state);
 	}
 	
+	@Override
+	public void onLoad()
+	{
+		super.onLoad();
+		if (ae2OnLoad != null) ae2OnLoad.accept(this);
+	}
+
+	@Override
+	public void setRemoved()
+	{
+		if (ae2OnUnload != null) ae2OnUnload.accept(this);
+		super.setRemoved();
+	}
+
 	public void updateDimensionAfterPlacingBlock()
 	{
 		if (this.level instanceof ServerLevel thisServerLevel)
@@ -126,6 +147,7 @@ public class HyperboxBlockEntity extends BlockEntity implements Nameable
 			this.getLevelIfKeySet(level.getServer());
 		}
 		this.setChanged();
+		if (ae2OnLevelKeySet != null) ae2OnLevelKeySet.accept(this);
 	}
 
 	@Override
@@ -188,7 +210,7 @@ public class HyperboxBlockEntity extends BlockEntity implements Nameable
 					serverLevel.invalidateCapabilities(this.getBlockPos());
 					return false;
 				});
-				return level.getCapability(sidedCap, targetPos, rotatedDirection);
+				return targetLevel.getCapability(sidedCap, targetPos, rotatedDirection);
 			}
 		}
 		return null;

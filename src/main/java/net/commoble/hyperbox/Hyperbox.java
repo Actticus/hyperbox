@@ -51,6 +51,7 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -133,6 +134,10 @@ public class Hyperbox
 			.build());
 		
 		// subscribe event handlers
+		if (ModList.get().isLoaded("ae2"))
+		{
+			net.commoble.hyperbox.compat.ae2.AE2Compat.init(modBus);
+		}
 		modBus.addListener(EventPriority.LOW, this::registerDelegateCapabilities);
 		modBus.addListener(this::onRegisterPayloads);
 		modBus.addListener(this::onBuildTabContents);
@@ -157,6 +162,8 @@ public class Hyperbox
 	@SuppressWarnings("unchecked")
 	private <T,C> void genericallyRegisterBlockCap(RegisterCapabilitiesEvent event, BlockCapability<T,C> blockCap)
 	{
+		if ("ae2:inworld_gridnode_host".equals(blockCap.name().toString())) return;
+
 		event.registerBlockEntity(blockCap, hyperboxBlockEntityType.get(), (be, context) -> context instanceof Direction direction
 			? be.getCapability((BlockCapability<T,Direction>)blockCap, direction)
 			: null);

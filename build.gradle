@@ -66,6 +66,9 @@ dependencies {
 
 	implementation "net.commoble.infiniverse:${infiniverse_mc_version}:${infiniverse_version}"
 	jarJar(group: "net.commoble.infiniverse", name: "${infiniverse_mc_version}", version: "[${infiniverse_min_version}, ${infiniverse_max_version})")
+
+	// Optional compat: Applied Energistics 2
+	compileOnly files('libs/appliedenergistics2-neoforge-17.13.0-beta.jar')
 }
 
 tasks.jarJar.configure {

@@ -1,5 +1,7 @@
 package net.commoble.hyperbox.blocks;
 
+import java.util.function.Consumer;
+
 import javax.annotation.Nullable;
 
 import net.commoble.hyperbox.Hyperbox;
@@ -26,7 +28,11 @@ public class ApertureBlockEntity extends BlockEntity
 	public static final String WEAK_POWER = "weak_power";
 	public static final String STRONG_POWER = "strong_power";
 	public static final String COLOR = "color";
-	
+
+	// Set by AE2Compat when AE2 is loaded
+	@Nullable public static Consumer<ApertureBlockEntity> ae2OnLoad = null;
+	@Nullable public static Consumer<ApertureBlockEntity> ae2OnUnload = null;
+
 	private int weakPower = 0;
 	private int strongPower = 0;
 	
@@ -40,6 +46,20 @@ public class ApertureBlockEntity extends BlockEntity
 	public ApertureBlockEntity(BlockEntityType<? extends ApertureBlockEntity> type, BlockPos pos, BlockState state)
 	{
 		super(type, pos, state);
+	}
+
+	@Override
+	public void onLoad()
+	{
+		super.onLoad();
+		if (ae2OnLoad != null) ae2OnLoad.accept(this);
+	}
+
+	@Override
+	public void setRemoved()
+	{
+		if (ae2OnUnload != null) ae2OnUnload.accept(this);
+		super.setRemoved();
 	}
 
 	@Nullable
